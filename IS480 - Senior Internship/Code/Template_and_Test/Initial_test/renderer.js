@@ -4,7 +4,7 @@ const path = require('path');
 
 function findDuplicates() {
     const workingDirectory = document.getElementById('workingDirectory').value;
-    const command = `powershell.exe -ExecutionPolicy Bypass -File .\\test.ps1`
+    const command = `powershell.exe -ExecutionPolicy Bypass -File .\\script.ps1`
     //const command = `powershell.exe -File script.ps1`;
     exec(command, { cwd: workingDirectory }, (error, stdout, stderr) => {
         if (error) {
