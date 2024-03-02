@@ -131,14 +131,32 @@ function exportToExcel(data) {
 function createNewFolder() {
     const workingDirectory = document.getElementById('workingDirectory').value;
     const newFolderName = document.getElementById('newDirectoryName').value;
+    const certScheduleDir = "CERTIFIED SCHEDULES";
+    const fileDir = "FILE";
     if (!newFolderName) {
         console.error('Please provide a folder name.');
         return;
     }
 
     const newFolderPath = path.join(workingDirectory, newFolderName);
+    const certSchedulePath = path.join(workingDirectory, newFolderName, certScheduleDir);
+    const fileDirPath = path.join(workingDirectory, newFolderName, fileDir);
 
     fs.mkdir(newFolderPath, { recursive: true }, (err) => {
+        if (err) {
+            console.error('Error creating folder:', err);
+            return;
+        }
+        console.log('Folder created successfully:', newFolderPath);
+    });
+    fs.mkdir(certSchedulePath, { recursive: true }, (err) => {
+        if (err) {
+            console.error('Error creating folder:', err);
+            return;
+        }
+        console.log('Folder created successfully:', newFolderPath);
+    });
+    fs.mkdir(fileDirPath, { recursive: true }, (err) => {
         if (err) {
             console.error('Error creating folder:', err);
             return;
