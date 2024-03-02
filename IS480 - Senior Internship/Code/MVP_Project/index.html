@@ -1,28 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Duplication Finder</title>
-    <style>
-        #directoryContainer {
-            border: 1px solid black;
-            padding: 10px;
-        }
-
-        #directoryHeader {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        #workingDirectory {
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        #buttonContainer {
-            border: 1px solid black;
-            padding: 10px;
-        }
-    </style>
+    <title>MVP Utilities</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="directoryContainer">
@@ -33,11 +13,13 @@
     </div>
     
     <div id="buttonContainer">
-        <button onclick="findDuplicates(document.getElementById('workingDirectory').value)">Duplicate Directories</button>
+        <button onclick="findDuplicatesAndDisplay(document.getElementById('workingDirectory').value)">Duplicate Directories</button>
+        <div id="tableContainer"></div>
     </div>
         
 
     <br><br>
+    <h3>To make a new directory populate the working directory above and then create a new folder</h3>
     <label for="newDirectoryName">New Folder Name:</label>
     <input type="text" id="newDirectoryName">
     <button onclick="createNewFolder()">Create New Folder</button>

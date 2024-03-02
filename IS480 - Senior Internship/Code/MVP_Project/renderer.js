@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const ExcelJS = require('exceljs');
 
 // Helper function to check if a directory name matches the student ID format
 function matchesStudentId(directoryName) {
@@ -19,7 +20,7 @@ function extractStudentId(directoryName) {
     return matches ? matches[1] : '';
 }
 
-function findDuplicates(workingDirectory) {
+function findDuplicatesAndDisplay(workingDirectory) {
     let ret = {};
 
     // Step 1: Loop over all the directories and when you find a student id, put it into the ret object as a key mapping to an empty array
@@ -42,16 +43,90 @@ function findDuplicates(workingDirectory) {
         }
     });
 
-    // Step 3: Print out the IDs that map to more than one directory
+    // Step 3: Create a table to display the data
+    const table = document.createElement('table');
+    const headerRow = table.insertRow();
+    headerRow.insertCell().textContent = 'Student ID';
+    headerRow.insertCell().textContent = 'Directories';
+
     for (const studentId in ret) {
         if (ret[studentId].length > 1) {
-            console.log(`Student ID ${studentId} maps to directories: ${ret[studentId].join(', ')}`);
+            const row = table.insertRow();
+            row.insertCell().textContent = studentId;
+            row.insertCell().textContent = ret[studentId].join(', ');
         }
     }
 
-    return ret;
+    // Display the table in the HTML document
+    const tableContainer = document.getElementById('tableContainer');
+    tableContainer.innerHTML = '';
+    tableContainer.innerHTML = '<br>'
+    tableContainer.appendChild(table);
+
+    // Line break after the Table to space out the button
+    tableContainer.appendChild(document.createElement('br'));
+
+    // Create button to export to CSV
+    const exportButton = document.createElement('button');
+    
+    exportButton.textContent = 'Export to Excel';
+    exportButton.onclick = () => exportToExcel(ret);
+    tableContainer.appendChild(exportButton);
 }
 
+function exportToExcel(data) {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Duplicates');
+
+    // Add headers and format them
+    const headerRow = worksheet.addRow(['Student ID', 'Directories']);
+    headerRow.font = { bold: true };
+    headerRow.eachCell((cell) => {
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+        };
+    });
+
+    // Add data and format it
+    Object.keys(data).forEach(studentId => {
+        const directories = data[studentId];
+        // Ensure directories is an array and join its elements
+        if(directories.length > 1){
+            const directoriesString = Array.isArray(directories) ? directories.join(', ') : '';
+
+            const row = worksheet.addRow([studentId, directoriesString]);
+            // formatting for the row
+            row.eachCell((cell) => {
+                cell.alignment = { vertical: 'middle', horizontal: 'left' };
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' }
+                };
+            });
+        }
+    });
+
+    // Adjust column widths automatically
+    worksheet.columns.forEach((column) => {
+        column.width = 'auto';
+    });
+
+    // Save the workbook to a file
+    const excelFilePath = path.join(__dirname, 'duplicates.xlsx');
+    workbook.xlsx.writeFile(excelFilePath)
+        .then(() => {
+            console.log('Excel file exported successfully:', excelFilePath);
+        })
+        .catch((error) => {
+            console.error('Error exporting to Excel:', error);
+        });
+}
 
 function createNewFolder() {
     const workingDirectory = document.getElementById('workingDirectory').value;

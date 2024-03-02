@@ -1,0 +1,34 @@
+html {
+    background-color: black;
+    color: orange;
+}
+
+table {
+    border-collapse: collapse;
+    border: 2px solid orange;
+}
+
+th, td {
+    border: 1px solid orange;
+    padding: 8px;
+}
+
+#directoryContainer {
+    border: 1px solid orange;
+    padding: 10px;
+}
+
+#directoryHeader {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#workingDirectory {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#buttonContainer {
+    border: 1px solid orange;
+    padding: 10px;
+}
