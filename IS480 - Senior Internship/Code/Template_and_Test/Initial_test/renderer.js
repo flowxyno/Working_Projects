@@ -79,7 +79,7 @@ function exportToExcel(data) {
     const worksheet = workbook.addWorksheet('Duplicates');
 
     // Define the default width for columns
-    const defaultColWidth = 14;
+    const defaultColWidth = 12;
 
     // Set the default width for columns
     worksheet.properties.defaultColWidth = defaultColWidth;
