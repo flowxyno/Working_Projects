@@ -5,13 +5,17 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package:win": "electron-packager . MVP_Utilities --platform=win32 --arch=x64 --out=dist --overwrite",
+    "package:mac": "electron-packager . MVP_Utilities --platform=darwin --arch=x64 --out=dist --overwrite",
+    "package:linux": "electron-packager . MVP_Utilities --platform=linux --arch=x64 --out=dist --overwrite"
   },
   "keywords": [],
   "author": "Tracy Harvey",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^28.2.1"
+    "electron": "^28.2.1",
+    "electron-packager": "^17.1.2"
   },
   "dependencies": {
     "exceljs": "^4.4.0"

@@ -78,6 +78,12 @@ function exportToExcel(data) {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Duplicates');
 
+    // Define the default width for columns
+    const defaultColWidth = 14;
+
+    // Set the default width for columns
+    worksheet.properties.defaultColWidth = defaultColWidth;
+
     // Add headers and format them
     const headerRow = worksheet.addRow(['Student ID', 'Directories']);
     headerRow.font = { bold: true };
@@ -113,9 +119,9 @@ function exportToExcel(data) {
     });
 
     // Adjust column widths automatically
-    worksheet.columns.forEach((column) => {
-        column.width = 'auto';
-    });
+    //worksheet.columns.forEach((column) => {
+      //  column.width = 'auto';
+    //});
 
     // Save the workbook to a file
     const excelFilePath = path.join(__dirname, 'duplicates.xlsx');
@@ -126,6 +132,65 @@ function exportToExcel(data) {
         .catch((error) => {
             console.error('Error exporting to Excel:', error);
         });
+}
+
+function findDirsAndMove(workingDirectory) {
+    // Clear previous table content
+    const tableContainer = document.getElementById('directoriesTableContainer');
+    tableContainer.innerHTML = '';
+    tableContainer.innerHTML = '<br>';
+
+    // Create a new table
+    const table = document.createElement('table');
+    const headerRow = table.insertRow();
+    headerRow.insertCell().textContent = 'Directory Name';
+    headerRow.insertCell().textContent = 'Moved';
+
+    // Read the contents of the working directory (layer 1)
+    const layer1Directories = fs.readdirSync(workingDirectory);
+
+    // Loop through each directory in layer 1
+    layer1Directories.forEach(layer1Dir => {
+        const layer1DirPath = path.join(workingDirectory, layer1Dir);
+
+        // Check if it's a directory
+        if (fs.statSync(layer1DirPath).isDirectory()) {
+            // Read the contents of the layer 1 directory (layer 2)
+            const layer2Contents = fs.readdirSync(layer1DirPath);
+
+            // Check each item in layer 2
+            layer2Contents.forEach(layer2Item => {
+                const layer2ItemPath = path.join(layer1DirPath, layer2Item);
+
+                // Check if it's a directory and matches the student ID format
+                if (fs.statSync(layer2ItemPath).isDirectory() && matchesStudentId(layer2Item)) {
+                    // Construct the destination path in layer 1
+                    const destinationPath = path.join(workingDirectory, layer2Item);
+
+                    try {
+                        // Move the directory from layer 2 to layer 1
+                        fs.renameSync(layer2ItemPath, destinationPath);
+                        console.log(`Directory moved: ${layer2ItemPath} -> ${destinationPath}`);
+
+                        // Add row to the table indicating the directory and successful move
+                        const row = table.insertRow();
+                        row.insertCell().textContent = layer2Item;
+                        row.insertCell().textContent = 'Yes';
+                    } catch (error) {
+                        console.error(`Error moving directory: ${error}`);
+
+                        // Add row to the table indicating the directory and failed move
+                        const row = table.insertRow();
+                        row.insertCell().textContent = layer2Item;
+                        row.insertCell().textContent = 'No';
+                    }
+                }
+            });
+        }
+    });
+
+    // Append the table to the container
+    tableContainer.appendChild(table);
 }
 
 function createNewFolder() {
