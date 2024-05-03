@@ -20,6 +20,7 @@ function extractStudentId(directoryName) {
     return matches ? matches[1] : '';
 }
 
+// This function finds and lists directories within the working directory that contain the same 9 digit CTC link ID number
 function findDuplicatesAndDisplay(workingDirectory) {
     let ret = {};
 
@@ -73,7 +74,7 @@ function findDuplicatesAndDisplay(workingDirectory) {
     exportButton.onclick = () => exportToExcel(ret);
     tableContainer.appendChild(exportButton);
 }
-
+// This function exports the built list of duplicate student directories from the findDuplicatesAndDisplay function
 function exportToExcel(data) {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Duplicates');
@@ -118,11 +119,6 @@ function exportToExcel(data) {
         }
     });
 
-    // Adjust column widths automatically
-    //worksheet.columns.forEach((column) => {
-      //  column.width = 'auto';
-    //});
-
     // Save the workbook to a file
     const excelFilePath = path.join(__dirname, 'duplicates.xlsx');
     workbook.xlsx.writeFile(excelFilePath)
@@ -134,6 +130,7 @@ function exportToExcel(data) {
         });
 }
 
+// This function finds student directories have mistakenly nested inside of other students directories
 function findDirsAndMove(workingDirectory) {
     // Clear previous table content
     const tableContainer = document.getElementById('directoriesTableContainer');
@@ -193,6 +190,7 @@ function findDirsAndMove(workingDirectory) {
     tableContainer.appendChild(table);
 }
 
+// This function creates a new student directory complete with the "CERTIFIED SCHEDULES" and "FILE" directories embedded in the new directory
 function createNewFolder() {
     const workingDirectory = document.getElementById('workingDirectory').value;
     const newFolderName = document.getElementById('newDirectoryName').value;
