@@ -13,12 +13,12 @@ th, td {
     padding: 8px;
 }
 
-#directoryContainer {
+#functionContainer {
     border: 1px solid orange;
     padding: 10px;
 }
 
-#directoryHeader {
+#functionHeader {
     font-weight: bold;
     margin-bottom: 5px;
 }

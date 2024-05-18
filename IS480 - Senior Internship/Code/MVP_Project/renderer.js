@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const ExcelJS = require('exceljs');
+const { Document, Packer, Paragraph, TextRun } = require('docx');
 
 // Helper function to check if a directory name matches the student ID format
 function matchesStudentId(directoryName) {
@@ -20,6 +21,31 @@ function extractStudentId(directoryName) {
     return matches ? matches[1] : '';
 }
 
+// Helper function to save exported files to the directory of the users chioice
+function saveFile(blob, fileName) {
+    // Create a link element
+    const link = document.createElement('a');
+
+    // Set the download attribute with a filename
+    link.download = fileName;
+
+    // Create a URL for the blog and set it as the href attribute
+    link.href = window.URL.createObjectURL(blob);
+
+    // Append the link to the body
+    document.body.appendChild(link);
+
+    // Background click the link to trigger the download
+    link.click();
+
+    // Clean up the blob URL
+    window.URL.revokeObjectURL(link.href);
+
+    // Remove the link from the document
+    document.body.removeChild(link);
+}
+
+// This function finds and lists directories within the working directory that contain the same 9 digit CTC link ID number
 function findDuplicatesAndDisplay(workingDirectory) {
     let ret = {};
 
@@ -66,15 +92,15 @@ function findDuplicatesAndDisplay(workingDirectory) {
     // Line break after the Table to space out the button
     tableContainer.appendChild(document.createElement('br'));
 
-    // Create button to export to CSV
+    // Create button to export to Excel
     const exportButton = document.createElement('button');
     
     exportButton.textContent = 'Export to Excel';
     exportButton.onclick = () => exportToExcel(ret);
     tableContainer.appendChild(exportButton);
 }
-
-function exportToExcel(data) {
+// This function exports the built list of duplicate student directories from the findDuplicatesAndDisplay function
+async function exportToExcel(data) {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Duplicates');
 
@@ -118,22 +144,16 @@ function exportToExcel(data) {
         }
     });
 
-    // Adjust column widths automatically
-    //worksheet.columns.forEach((column) => {
-      //  column.width = 'auto';
-    //});
+    // Create a buffer from the workbook
+    const buffer = await workbook.xlsx.writeBuffer();
 
-    // Save the workbook to a file
-    const excelFilePath = path.join(__dirname, 'duplicates.xlsx');
-    workbook.xlsx.writeFile(excelFilePath)
-        .then(() => {
-            console.log('Excel file exported successfully:', excelFilePath);
-        })
-        .catch((error) => {
-            console.error('Error exporting to Excel:', error);
-        });
+    // Create a blob from the buffer
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+    saveFile(blob, 'duplicates.xlsx');
 }
 
+// This function finds student directories have mistakenly nested inside of other students directories
 function findDirsAndMove(workingDirectory) {
     // Clear previous table content
     const tableContainer = document.getElementById('directoriesTableContainer');
@@ -193,6 +213,108 @@ function findDirsAndMove(workingDirectory) {
     tableContainer.appendChild(table);
 }
 
+function findDirectoriesWithoutPatterns(workingDirectory, patterns) {
+    // Array to store directories without any of the patterns
+    const directoriesWithoutPatterns = [];
+
+    // Read the contents of the working directory
+    const directories = fs.readdirSync(workingDirectory);
+
+    // Loop through each directory
+    directories.forEach(directory => {
+        // Construct the full path of the directory
+        const directoryPath = path.join(workingDirectory, directory);
+
+        // Check if it's a directory
+        if (fs.statSync(directoryPath).isDirectory()) {
+            // Check if "CERTIFIED SCHEDULES" directory exists
+            const certifiedSchedulesPath = path.join(directoryPath, 'CERTIFIED SCHEDULES');
+            if (fs.existsSync(certifiedSchedulesPath)) {
+                // Read the contents of "CERTIFIED SCHEDULES" directory
+                const files = fs.readdirSync(certifiedSchedulesPath);
+                // Check each file in the directory
+                const containsPattern = files.some(file => {
+                    // Check if any of the patterns exist at the beginning of the file name
+                    return patterns.some(pattern => file.startsWith(pattern));
+                });
+                // If none of the patterns are found, add the directory to the list
+                if (!containsPattern) {
+                    directoriesWithoutPatterns.push(directory);
+                }
+            }
+        }
+    });
+
+    // Display the result in the resultContainer
+    const resultContainer = document.getElementById('resultContainer');
+    resultContainer.innerHTML = '';
+    if (directoriesWithoutPatterns.length > 0) {
+        const list = document.createElement('ul');
+        directoriesWithoutPatterns.forEach(directory => {
+            const listItem = document.createElement('li');
+            listItem.textContent = directory;
+            list.appendChild(listItem);
+        });
+        resultContainer.appendChild(list);
+
+        const exportButton = document.createElement('button');
+    
+        exportButton.textContent = 'Export to Word';
+        exportButton.onclick = () => exportToWord();
+        resultContainer.appendChild(exportButton);
+    } else {
+        resultContainer.textContent = 'All directories contain at least one of the patterns.';
+    }
+}
+
+// Function to be called when the button is clicked
+function handleFindDirectoriesWithoutPatterns() {
+    const workingDirectory = document.getElementById('workingDirectory').value;
+    const pattern1 = document.getElementById('pattern1').value;
+    const pattern2 = document.getElementById('pattern2').value;
+    const pattern3 = document.getElementById('pattern3').value;
+    const pattern4 = document.getElementById('pattern4').value;
+    const patterns = [pattern1, pattern2, pattern3, pattern4];
+    findDirectoriesWithoutPatterns(workingDirectory, patterns);
+}
+
+async function exportToWord() {
+    const resultContainer = document.getElementById('resultContainer');
+    const items = resultContainer.getElementsByTagName('li');
+    
+    if (items.length === 0) {
+        alert('No data to export.');
+        return;
+    }
+
+    const doc = new Document({
+        sections: [{
+            properties: {},
+            children: [
+                new Paragraph({
+                    children: [
+                        new TextRun("Directories To Be Archived:"),
+                    ]
+                }),
+                new Paragraph({
+                    children: [
+                        new TextRun("")
+                    ]
+                }),
+                ...Array.from(items).map(item => new Paragraph(item.textContent))
+            ]
+        }]
+    });
+
+    const buffer = await Packer.toBuffer(doc);
+
+    // Create a blob from the buffer
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    
+    saveFile(blob, 'Directories_To_Archive.docx');
+}
+
+// This function creates a new student directory complete with the "CERTIFIED SCHEDULES" and "FILE" directories embedded in the new directory
 function createNewFolder() {
     const workingDirectory = document.getElementById('workingDirectory').value;
     const newFolderName = document.getElementById('newDirectoryName').value;

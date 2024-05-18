@@ -25,14 +25,16 @@
     <div id="functionContainer">
         <div id="functionHeader">To search for archivable directories populate the working directory above and enter the quarter codes below</div>
         <br>
-        <div>Enter Numeric Patterns:</div>
+        <div>Enter Quarter Codes:</div>
         <input type="text" id="pattern1" placeholder="Quarter Code 1">
         <input type="text" id="pattern2" placeholder="Quarter Code 2">
         <input type="text" id="pattern3" placeholder="Quarter Code 3">
+        <input type="text" id="pattern4" placeholder="Quarter Code 4">
 
         <div id="buttonContainer">
-            <button onclick="findDirectoriesWithoutPatterns()">Find Directories</button>
+            <button onclick="handleFindDirectoriesWithoutPatterns()">Find Directories</button>
             <div id="resultContainer"></div>
+            
         </div> 
     </div>
 
