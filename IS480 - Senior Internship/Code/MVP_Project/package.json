@@ -1,14 +1,14 @@
 {
   "name": "MVP_Utilities",
-  "version": "1.0.5",
+  "version": "1.2",
   "description": "Various Utility programs for the Military Veteran Program of Olympic College",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "package:win": "electron-packager . MVP_Utilities v1.0.5 --platform=win32 --arch=x64 --out=dist --overwrite",
-    "package:mac": "electron-packager . MVP_Utilities v1.0.5 --platform=darwin --arch=x64 --out=dist --overwrite",
-    "package:linux": "electron-packager . MVP_Utilities v1.0.5 --platform=linux --arch=x64 --out=dist --overwrite"
+    "package:win": "electron-packager . MVP_Utilities v1.2 --platform=win32 --arch=x64 --out=dist --overwrite",
+    "package:mac": "electron-packager . MVP_Utilities v1.2 --platform=darwin --arch=x64 --out=dist --overwrite",
+    "package:linux": "electron-packager . MVP_Utilities v1.2 --platform=linux --arch=x64 --out=dist --overwrite"
   },
   "keywords": [],
   "author": "Tracy Harvey",
