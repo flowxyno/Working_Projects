@@ -1,2 +1,8 @@
 Possible Projects:
+
+Media Assistance Software
 -   program that takes 2 or more directories that contain media and compare the resolution on media that are found in both directories and prints it to a list
+
+NEFF utilities Software
+-   Program that assists with various aspects of NEFF content sorting and manipulation
+    -    Find and replace Feature
