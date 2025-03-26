@@ -7,3 +7,5 @@ NEFF utilities Software
 -   Program that assists with various aspects of NEFF content sorting and manipulation
     -    Find and replace Feature
     -    Slideshow feature
+    -    word or thread match search feature
+
