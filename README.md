@@ -28,3 +28,12 @@ Description - I am constantly doing some form of file maintenance, renaming file
    - Duplicate file search function - Not Started
 
 ---
+
+## ALFC Site Critique
+  Description - Take a look at the website for ALFC and give recommendations to the site web master for corrections or things that could and should be improved.
+
+## Status: 
+1. Site Critique
+   - Site observation - Not started
+   - Develope notes on possible improvements with recommendations - Not started
+   - E-mail Rachel with findings - Not started
