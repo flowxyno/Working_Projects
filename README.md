@@ -34,6 +34,6 @@ Description - I am constantly doing some form of file maintenance, renaming file
 
 ## Status: 
 1. Site Critique
-   - Site observation - Not started
-   - Develope notes on possible improvements with recommendations - Not started
-   - E-mail Rachel with findings - Not started
+   - Site observation - Done
+   - Develope notes on possible improvements with recommendations - Done
+   - E-mail Rachel with findings - Done
