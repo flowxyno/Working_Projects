@@ -1,0 +1,14 @@
+- End goal is to have a working windows machine on the blue SSD 
+
+- Silver drive is the original drive which failed and the blue drive is the replacement. Linux installs on it is just fine but Windows does not 
+  
+  Questions:
+  - Which version of windows did you try to install on it? 10 or 11
+    - if 11 does machine have a TPM chip?
+
+  - Does he want me to do a revovery on the silver drive and if so what kind of files is he most interested in recovering?
+
+  Order of March: 
+  Install blue drive - 
+  attempt to install windows 10 - 
+  attempt to install windows 11 if windows 10 install is successful - 
